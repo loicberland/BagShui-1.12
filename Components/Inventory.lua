@@ -1003,6 +1003,7 @@ function Inventory:SetProfile(desiredProfileId, profileType, startup)
 		else
 			self.layout = profile.structure.primary.layout
 		end
+		self:NormalizeLayoutGroupIds()
 	end
 
 	-- Store the selected profile in settings.

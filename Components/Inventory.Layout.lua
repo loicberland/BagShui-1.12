@@ -131,6 +131,20 @@ function Inventory:ValidateLayout()
 			end
 		end
 	end
+
+	self:NormalizeLayoutGroupIds()
+end
+
+
+
+--- Rebuild group IDs from their current positions in the layout.
+--- Group IDs are coordinates, so they must not survive a layout mutation unchanged.
+function Inventory:NormalizeLayoutGroupIds()
+	for rowNum, rowGroups in ipairs(self.layout) do
+		for groupNum, groupDetails in ipairs(rowGroups) do
+			groupDetails.groupId = rowNum .. ":" .. groupNum
+		end
+	end
 end
 
 
@@ -260,6 +274,8 @@ end
 function Inventory:UpdateLayoutLookupTables()
 	--self:PrintDebug("UpdateLayoutLookupTables()")
 	-- self:PrintDebug(BsCategories.list)
+	-- This also repairs coordinate IDs stored in profiles created before normalization.
+	self:NormalizeLayoutGroupIds()
 
 	-- This will be used at the end if defaultCategoryFound is still false.
 	local lastGroupId = ""
@@ -281,14 +297,11 @@ function Inventory:UpdateLayoutLookupTables()
 	-- Process the layout and update lookup tables.
 	for rowNum, rowGroups in ipairs(self.layout) do
 		for groupNum, groupDetails in ipairs(rowGroups) do
-			local groupId = groupDetails.groupId or (rowNum .. ":" .. groupNum)
+			local groupId = rowNum .. ":" .. groupNum
 			lastGroupId = groupId
 
 			-- Store reference to the group for easy access later.
 			self.groups[groupId] = groupDetails
-
-			-- Store the group ID on the group so it's easily accessible for use by Update()
-			groupDetails.groupId = groupId
 
 			-- Groups aren't technically active unless they have categories assigned and at least one category is valid.
 			if groupDetails.categories and table.getn(groupDetails.categories) > 0 then

@@ -437,12 +437,13 @@ function Inventory:AssignGroupToLayout(objectId, objectType, insertType, destRow
 	else
 		table.insert(self.layout[destRow], destColumn, group)
 	end
+	self:NormalizeLayoutGroupIds()
 
 	self:EditModeWindowUpdate(true)
 
 	-- Prompt to name new groups.
 	if groupIsNew then
-		self:RenameGroup(destRow .. ":" .. destColumn, true)
+		self:RenameGroup(group.groupId, true)
 	end
 end
 
@@ -657,6 +658,8 @@ function Inventory:RemoveGroupFromLayout(row, column, destRow, destColumn, noWin
 		table.remove(self.layout, row)
 		rowRemoved = true
 	end
+
+	self:NormalizeLayoutGroupIds()
 
 	-- Destination layout adjustments.
 	if destRow ~= nil and destColumn ~= nil then
