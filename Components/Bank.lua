@@ -167,6 +167,9 @@ function Bank:UpdateBagSlotPurchaseStatus(bagSlotButton, numSlotsPurchased, allS
 	if numSlotsPurchased == nil then
 		return
 	end
+	if bagSlotButton.bagshuiData.bagSlotNum == nil then
+		return
+	end
 	-- `<button>.bagshuiData.bagSlotNum` is the sequential bag slot number as set in InventoryUi:CreateBagSlotButtons().
 	self.containers[bagSlotButton.bagshuiData.bagNum].purchased = (
 			allSlotsPurchased
